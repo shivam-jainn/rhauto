@@ -26,6 +26,29 @@ const fs = require('fs');
     console.log('Element not found or operation timed out.');
   }
 
+  const autoScroll = async () => {
+    await page.evaluate(async () => {
+      await new Promise((resolve, reject) => {
+        let totalHeight = 0;
+        const distance = 100;
+        const scrollInterval = setInterval(() => {
+          const scrollHeight = document.body.scrollHeight;
+          window.scrollBy(0, distance);
+          totalHeight += distance;
+
+          // If we've scrolled to the bottom, stop scrolling
+          if (totalHeight >= scrollHeight) {
+            clearInterval(scrollInterval);
+            resolve();
+          }
+        }, 100); // Adjust the interval (in milliseconds) for smoother scrolling.
+      });
+    });
+  };
+
+  // Scroll down to load more content
+  await autoScroll();
+  
   // Close the browser
   await browser.close();
 })();
